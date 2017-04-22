@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.search.SearchHit;
 
 public interface EsClient {
 	
@@ -13,9 +14,10 @@ public interface EsClient {
 	
 	public List<String> readAllDocuments(Client client) throws Exception;
 	
-	public List<String> readDocument(Client client, String field, String value) throws Exception;
-
-	public void deleteDocuments(Client client, String dbName, String tableName, String id) throws Exception;
+	public List<SearchHit> readDocument(Client client, String field, String value) throws Exception;
+	
+	public void deleteDocuments(Client client, String dbName, String tableName, String id) 
+			throws Exception;
 	
 	public void closeClient(Client client) throws Exception;
 }

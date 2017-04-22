@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -48,7 +49,7 @@ public class DefaultEsClient implements EsClient {
 	}
 
 	@Override
-	public List<String> readDocument(Client client, String field, String value) throws Exception {
+	public List<SearchHit> readDocument(Client client, String field, String value) throws Exception {
 		SearchResponse response = client.prepareSearch()
 				.setTypes()
 				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
@@ -61,16 +62,17 @@ public class DefaultEsClient implements EsClient {
 			throw new IllegalArgumentException("too many results");
 		}
 		SearchHit[] searchHits = response.getHits().getHits();
-		List<String> results = new ArrayList<>();
+		List<SearchHit> results = new ArrayList<>();
 		for (SearchHit hit : searchHits) {
-			results.add(hit.getSourceAsString());
+			results.add(hit);
 		}
 		return results;
 	}
 
 	@Override
-	public void deleteDocuments(Client client, String dbName, String tableName, String id) throws Exception {
-		client.prepareDelete(dbName, tableName, id).get();
+	public void deleteDocuments(Client client, String dbName, String tableName, String id) 
+			throws Exception {
+		DeleteResponse response = client.prepareDelete(dbName, tableName, id).execute().actionGet();
 	}
 
 	@Override
