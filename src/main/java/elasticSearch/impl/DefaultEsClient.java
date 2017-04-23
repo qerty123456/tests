@@ -34,6 +34,7 @@ public class DefaultEsClient implements EsClient {
 	public String createDocument(Client client, String dbName, String tableName, XContentBuilder builder)
 			throws Exception {
 		IndexResponse response = client.prepareIndex(dbName, tableName).setSource(builder).get();
+		System.out.println(response);
 		return response.getId();
 	}
 
@@ -73,6 +74,7 @@ public class DefaultEsClient implements EsClient {
 	public void deleteDocuments(Client client, String dbName, String tableName, String id) 
 			throws Exception {
 		DeleteResponse response = client.prepareDelete(dbName, tableName, id).execute().actionGet();
+	//	System.out.println(response.toString());
 	}
 
 	@Override

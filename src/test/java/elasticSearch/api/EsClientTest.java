@@ -44,8 +44,9 @@ public class EsClientTest {
 		Client client = esClient.createEsClient("elasticsearch");
 		XContentBuilder builder1 = XContentFactory.jsonBuilder()
 				.startObject().field("field1", "value1").endObject();
-		esClient.createDocument(client, "test_db", "test_table", builder1);
+		System.out.println(esClient.createDocument(client, "test_db", "test_table", builder1));
 		builder1.close();
+		Thread.sleep(5000L);
 		XContentBuilder builder2 = XContentFactory.jsonBuilder()
 				.startObject().field("field2", "value2").endObject();
 		esClient.createDocument(client, "test_db", "test_table", builder2);
@@ -54,13 +55,18 @@ public class EsClientTest {
 				.startObject().field("field3", "value3").endObject();
 		esClient.createDocument(client, "test_db", "test_table", builder3);
 		builder3.close();
+		Thread.sleep(5000L);
 		List<String> results = esClient.readAllDocuments(client);
+		for(String res : results) {
+			System.out.println(res);
+		}
 		
 		assertTrue(results.contains("{\"field1\":\"value1\"}"));
 		assertTrue(results.contains("{\"field2\":\"value2\"}"));
 		assertTrue(results.contains("{\"field3\":\"value3\"}"));
 	}
 	
+
 	@Test
 	public void testGetDocuments() throws Exception {
 		Client client = esClient.createEsClient("elasticsearch");
@@ -76,6 +82,7 @@ public class EsClientTest {
 				.startObject().field("field3", "value3").endObject();
 		esClient.createDocument(client, "test_db", "test_table", builder3);
 		builder3.close();
+		Thread.sleep(5000L);
 		List<SearchHit> results = esClient.readDocument(client, "field1", "value1");
 		assertTrue(!results.isEmpty());
 		System.out.println(results.size());
@@ -88,11 +95,18 @@ public class EsClientTest {
 				.startObject().field("field1", "value1").endObject();
 		esClient.createDocument(client, "test_db", "test_table", builder1);
 		builder1.close();
+		Thread.sleep(5000L);
+//		List<String> allDocs = esClient.readAllDocuments(client);
+//		for(String hit : allDocs) {
+//			System.out.println(hit);
+//		}
 		List<SearchHit> toDelete = esClient.readDocument(client, "field1", "value1");
+		//System.out.println(toDelete.size());
 		for(SearchHit hit : toDelete) {
-			System.out.println(hit.getId());
+			//System.out.println(hit.getId());
 			esClient.deleteDocuments(client, "test_db", "test_table", hit.getId());
 		}
+		Thread.sleep(5000L);
 		List<SearchHit> results = esClient.readDocument(client, "field1", "value1");
 		for(SearchHit hit : results) {
 			System.out.println(hit.getId());
